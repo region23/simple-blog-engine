@@ -16,7 +16,7 @@ const { createPost } = require('../lib/postGenerator');
 const packageJson = require('../package.json');
 
 program
-  .name('blog-engine')
+  .name('simple-blog-engine')
   .description('Markdown blog engine CLI')
   .version(packageJson.version);
 
@@ -309,19 +309,30 @@ Write something about yourself here.
     packageJson.version = packageJson.version || '1.0.0';
     packageJson.description = packageJson.description || 'My blog built with simple-blog-engine';
     
+    // Add scripts if they don't exist
     packageJson.scripts = packageJson.scripts || {};
-    packageJson.scripts.dev = 'blog-engine serve';
-    packageJson.scripts.build = 'blog-engine build';
-    packageJson.scripts.deploy = 'npm run build && echo "Deploy command goes here"';
+    packageJson.scripts.start = packageJson.scripts.start || 'npx serve dist';
+    packageJson.scripts.dev = 'simple-blog-engine serve';
+    packageJson.scripts.build = 'simple-blog-engine build';
+    packageJson.scripts.init = packageJson.scripts.init || 'simple-blog-engine init';
+    packageJson.scripts.post = packageJson.scripts.post || 'simple-blog-engine post';
+    packageJson.scripts.deploy = packageJson.scripts.deploy || 'npm run build && echo "Deploy command goes here"';
     
+    // For backward compatibility, keep the 'new' script if it already exists
+    if (packageJson.scripts.new && packageJson.scripts.new.includes('new')) {
+      packageJson.scripts.new = 'simple-blog-engine post';
+    }
+    
+    // Ensure dependencies exist
     packageJson.dependencies = packageJson.dependencies || {};
     
-    // Удаляем старую зависимость, если она существует
+    // Remove old package name if it exists
     if (packageJson.dependencies['markdown-blog-engine']) {
       delete packageJson.dependencies['markdown-blog-engine'];
     }
     
-    packageJson.dependencies['simple-blog-engine'] = '^1.2.0';
+    // Add simple-blog-engine dependency
+    packageJson.dependencies['simple-blog-engine'] = '^2.0.0';
     
     fs.writeFileSync(
       packageJsonPath,
@@ -337,7 +348,7 @@ Write something about yourself here.
   });
 
 program
-  .command('new')
+  .command('post')
   .description('Create a new blog post template')
   .option('-d, --directory <path>', 'Blog directory', './blog')
   .action((options) => {
@@ -372,5 +383,45 @@ program
     });
   });
 
-// Parse command line arguments
+// Backward compatibility command
+program
+  .command('new')
+  .description('[DEPRECATED] Use "post" command instead')
+  .option('-d, --directory <path>', 'Blog directory', './blog')
+  .action((options) => {
+    console.log('⚠️  The "new" command has been renamed to "post"');
+    console.log('Please use "simple-blog-engine post" instead');
+    console.log('Running "post" command for backward compatibility...\n');
+    
+    // Create readline interface when needed
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    
+    // Prompt for post title
+    rl.question('Enter the title for your new post: ', (title) => {
+      if (!title.trim()) {
+        console.error('Error: Post title cannot be empty');
+        rl.close();
+        return;
+      }
+      
+      console.log(`Creating new post: "${title}"...`);
+      
+      // Create the post
+      const result = createPost(title, options.directory);
+      
+      if (result.success) {
+        console.log(`Post created successfully!`);
+        console.log(`Path: ${result.path}`);
+        console.log(`Slug: ${result.slug}`);
+      } else {
+        console.error(`Error creating post: ${result.error}`);
+      }
+      
+      rl.close();
+    });
+  });
+
 program.parse(process.argv); 

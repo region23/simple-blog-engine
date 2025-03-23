@@ -24,3 +24,8 @@ logs
 
 # Coverage directory
 coverage/ 
+
+# Test directories
+tests/temp*/
+tests/npm-test-*/
+.nyc_output/ 

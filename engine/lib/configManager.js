@@ -33,7 +33,7 @@ const DEFAULT_CONFIG = {
   _version: CONFIG_VERSION,
   site: {
     title: 'Markdown Blog',
-    description: 'A static blog built with markdown-blog-engine',
+    description: 'A static blog built with simple-blog-engine',
     language: 'en'
   },
   content: {

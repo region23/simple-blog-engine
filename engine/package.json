@@ -1,10 +1,9 @@
 {
   "name": "simple-blog-engine",
-  "version": "1.2.2",
+  "version": "3.0.0",
   "description": "Современный легковесный генератор статического блога с поддержкой Markdown",
   "main": "lib/index.js",
   "bin": {
-    "blog-engine": "bin/blog-engine.js",
     "simple-blog-engine": "bin/blog-engine.js"
   },
   "files": [
@@ -19,7 +18,7 @@
     "telegram-iv-template.txt"
   ],
   "scripts": {
-    "test": "echo \"Warning: no test specified\" && exit 0",
+    "test": "node tests/npm-publishing/run-tests.js",
     "prepublishOnly": "npm test"
   },
   "keywords": [

@@ -39,9 +39,9 @@ mkdir my-blog && cd my-blog
 npm init -y
 
 # Инициализируйте новый блог
-npx blog-engine init
-# или
 npx simple-blog-engine init
+# или
+npm run init
 ```
 
 ### Локальная разработка
@@ -49,8 +49,6 @@ npx simple-blog-engine init
 ```bash
 # Запуск сервера для разработки
 npm run dev
-# или
-npx blog-engine serve
 # или
 npx simple-blog-engine serve
 ```
@@ -60,8 +58,6 @@ npx simple-blog-engine serve
 ```bash
 # Генерация статического сайта
 npm run build
-# или
-npx blog-engine build
 # или
 npx simple-blog-engine build
 ```
@@ -97,9 +93,9 @@ npx simple-blog-engine build
 ### Создание и редактирование постов
 
 1. **Создание нового поста**:
-   - Вариант 1: Запустите `npm run new` (или `npx blog-engine new`) и введите название статьи в интерактивном режиме
+   - Вариант 1: Запустите `npm run post` (или `npx simple-blog-engine post`) и введите название статьи в интерактивном режиме
      ```bash
-     $ npm run new
+     $ npm run post
      Enter the title for your new post: Мой новый пост о JavaScript
      Creating new post: "Мой новый пост о JavaScript"...
      Post created successfully!
@@ -202,21 +198,14 @@ npx simple-blog-engine build
 
 ## Команды CLI
 
-В движке доступны две эквивалентные CLI-команды: компактная `blog-engine` и полная `simple-blog-engine` (соответствующая названию пакета). Обе команды поддерживают одинаковый набор подкоманд и опций:
+В движке доступна CLI-команда `simple-blog-engine` (соответствующая названию пакета) со следующими подкомандами и опциями:
 
-| Команда                                  | NPM скрипт         | Описание                                           |
+| Команда                                  | NPM скрипт         | Описание                                          |
 |------------------------------------------|--------------------|----------------------------------------------------|
-| `blog-engine build`                      | `npm run build`    | Генерация статического сайта                       |
-| `simple-blog-engine build`               |                    |                                                    |
-|------------------------------------------|--------------------|----------------------------------------------------|
-| `blog-engine serve`                      | `npm run dev`      | Локальный запуск для разработки                    |
-| `simple-blog-engine serve`               |                    |                                                    |
-|------------------------------------------|--------------------|----------------------------------------------------|
-| `blog-engine init`                       | `npm run init`     | Инициализация нового блога                         |
-| `simple-blog-engine init`                |                    |                                                    |
-|------------------------------------------|--------------------|----------------------------------------------------|
-| `blog-engine new`                        | `npm run new`      | Создание нового поста (интерактивно)               |
-| `simple-blog-engine new`                 |                    |                                                    |
+| `simple-blog-engine build`               | `npm run build`    | Генерация статического сайта                       |
+| `simple-blog-engine serve`               | `npm run dev`      | Локальный запуск для разработки                    |
+| `simple-blog-engine init`                | `npm run init`     | Инициализация нового блога                         |
+| `simple-blog-engine post`                 | `npm run post`      | Создание нового поста (интерактивно)               |
 
 ## Скрипты
 
@@ -224,7 +213,7 @@ npx simple-blog-engine build
 - `npm run dev` - Сборка сайта и локальный запуск для разработки с автоматическим обновлением
 - `npm run build` - Генерация статического сайта для продакшена
 - `npm run init` - Инициализация нового блога со стандартными шаблонами и настройками
-- `npm run new` - Создание нового шаблона статьи (интерактивный режим)
+- `npm run post` - Создание нового шаблона статьи (интерактивный режим)
 
 ## Публикация блога на GitHub Pages
 

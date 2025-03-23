@@ -23,46 +23,34 @@ npm init -y
 npm install simple-blog-engine
 
 # Используя стандартную команду
-npx blog-engine init
+npx simple-blog-engine init
 
 # Или с помощью альтернативной команды
-npx simple-blog-engine init
+npm run init
 ```
 
 ### Запуск локального сервера разработки
 
 ```bash
-# Используя стандартную команду
-npx blog-engine serve
+npx simple-blog-engine serve
 # или
 npm run dev
-
-# Используя альтернативную команду
-npx simple-blog-engine serve
 ```
 
 ### Создание нового поста
 
 ```bash
-# Используя стандартную команду
-npx blog-engine new
+npx simple-blog-engine post
 # или
-npm run new
-
-# Используя альтернативную команду
-npx simple-blog-engine new
+npm run post
 ```
 
 ### Сборка статического сайта
 
 ```bash
-# Используя стандартную команду
-npx blog-engine build
+npx simple-blog-engine build
 # или
 npm run build
-
-# Используя альтернативную команду
-npx simple-blog-engine build
 ```
 
 ## Структура проекта
@@ -83,16 +71,16 @@ npx simple-blog-engine build
 └── dist/                 # Сгенерированный статический сайт (результат)
 ```
 
-## Команды CLI
+## CLI команды
 
-В движке доступны две эквивалентные CLI-команды: компактная `blog-engine` и полная `simple-blog-engine` (соответствующая названию пакета). Обе команды поддерживают одинаковый набор подкоманд и опций:
+В движке доступна CLI-команда `simple-blog-engine` (соответствующая названию пакета) со следующими подкомандами и опциями:
 
-| Команда                                   | Описание                                           |
-|-------------------------------------------|----------------------------------------------------|
-| `blog-engine build` / `simple-blog-engine build`         | Генерация статического сайта                       |
-| `blog-engine serve` / `simple-blog-engine serve`         | Локальный запуск для разработки                    |
-| `blog-engine init` / `simple-blog-engine init`           | Инициализация нового блога                         |
-| `blog-engine new` / `simple-blog-engine new`             | Создание нового поста (интерактивно)               |
+| Команда                                     | Описание                                        |
+|---------------------------------------------|------------------------------------------------|
+| `simple-blog-engine build`                  | Генерация статического сайта                    |
+| `simple-blog-engine serve`                  | Локальный запуск для разработки                 |
+| `simple-blog-engine init`                   | Инициализация нового блога                      |
+| `simple-blog-engine post`                   | Создание нового поста (интерактивно)            |
 
 ## Конфигурация
 
