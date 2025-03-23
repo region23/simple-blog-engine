@@ -1,0 +1,45 @@
+name: Publish Package to npmjs
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'engine/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Check if version has been updated
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          NPM_VERSION=$(npm view simple-blog-engine version 2>/dev/null || echo "0.0.0")
+          if [ "$PACKAGE_VERSION" != "$NPM_VERSION" ]; then
+            echo "Version changed: $NPM_VERSION -> $PACKAGE_VERSION"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version unchanged: $PACKAGE_VERSION"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Publish to npmjs
+        if: steps.check.outputs.version_changed == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
