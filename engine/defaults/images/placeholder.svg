@@ -1,0 +1,13 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#f8fafc" />
+  <g fill="#3b82f6" opacity="0.15">
+    <circle cx="400" cy="200" r="150" />
+    <circle cx="450" cy="150" r="100" />
+    <circle cx="350" cy="250" r="100" />
+  </g>
+  <path d="M300,170 L370,170 L370,240 L440,240 L440,170 L510,170 L510,240 L440,310 L370,310 L300,240 Z" 
+        fill="none" stroke="#3b82f6" stroke-width="8" />
+  <text x="400" y="360" font-family="Inter, sans-serif" font-size="24" fill="#64748b" text-anchor="middle">
+    Pavlenko.Tech - AI & Development
+  </text>
+</svg> 

@@ -1,0 +1,27 @@
+{
+  "name": "my-blog",
+  "version": "1.0.0",
+  "description": "Мой блог на Markdown",
+  "private": true,
+  "scripts": {
+    "start": "npx serve dist",
+    "dev": "blog-engine serve",
+    "build": "blog-engine build",
+    "init": "blog-engine init",
+    "new": "blog-engine new",
+    "deploy": "npm run build && echo \"Deploy command goes here\""
+  },
+  "keywords": [
+    "blog",
+    "markdown",
+    "static-site"
+  ],
+  "author": "Pavlenko",
+  "license": "MIT",
+  "dependencies": {
+    "simple-blog-engine": "^1.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

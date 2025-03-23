@@ -1,0 +1,71 @@
+---
+description: Правила и стандарты обработки Markdown в проекте
+globs: scripts/generate-static.js
+---
+
+# Обработка Markdown в проекте
+
+## Используемые библиотеки
+
+Для рендеринга Markdown в HTML используются следующие библиотеки:
+
+- **marked v15.x**: Основная библиотека для конвертации Markdown в HTML
+- **marked-smartypants**: Расширение для улучшения типографики (преобразование кавычек, тире и т.д.)
+- **marked-gfm-heading-id**: Расширение для автоматической генерации ID заголовков в стиле GitHub
+
+## Настройки рендеринга
+
+```javascript
+function configureMarked() {
+  // Настройка рендерера
+  const renderer = {
+    // Кастомный рендеринг кода с подсветкой синтаксиса
+    code(code, language) {
+      return `<pre><code class="language-${language || 'text'}">${code}</code></pre>`;
+    },
+    
+    // Ссылки с target="_blank" для внешних URL
+    link(href, content, title) {
+      const titleAttr = title ? ` title="${title}"` : '';
+      const targetAttr = typeof href === 'string' && href.startsWith('http') ? 
+        ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a href="${href}"${titleAttr}${targetAttr}>${content}</a>`;
+    },
+    
+    // Изображения с подписями
+    image(href, content, title) {
+      const titleAttr = title ? ` title="${title}"` : '';
+      return `<figure><img src="${href}" alt="${content || ''}"${titleAttr}>
+              <figcaption>${content || ''}</figcaption></figure>`;
+    }
+  };
+  
+  // Основные настройки marked
+  marked.use({
+    renderer: renderer,
+    gfm: true,
+    breaks: true,
+    smartLists: true
+  });
+
+  // Подключение расширений
+  marked.use(markedSmartypants());
+  marked.use(gfmHeadingId());
+}
+```
+
+## Важные замечания
+
+1. **Совместимость версий**: При обновлении библиотеки marked следить за совместимостью с расширениями. Текущая версия marked 15.x требует соответствующие версии расширений.
+
+2. **API рендерера**: API для создания рендерера изменилось в marked 15.x. Теперь вместо создания экземпляра с `new marked.Renderer()` и присваивания методов, используется объект с методами.
+
+3. **ID заголовков**: За генерацию ID для заголовков отвечает marked-gfm-heading-id. ID используются для оглавления и внутренней навигации по статье.
+
+4. **Безопасность**: При необходимости рассмотреть подключение marked-mangle для дополнительной защиты от XSS.
+
+## Возможные улучшения
+
+- Автоматическая генерация оглавления с использованием функции `getHeadingList()` из marked-gfm-heading-id
+- Кэширование результатов рендеринга для повышения производительности
+- Добавление поддержки сносок и других расширенных возможностей Markdown через дополнительные плагины 

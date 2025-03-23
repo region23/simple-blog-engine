@@ -1,0 +1,12 @@
+<article class="post-card">
+  <h2><a href="{{url}}">{{title}}</a></h2>
+  <div class="post-meta">
+    <time datetime="{{date}}">{{formatted_date}}</time>
+    {{#if author}}<span class="post-author">от {{author}}</span>{{/if}}
+    {{reading_time}}
+  </div>
+  {{summary}}
+  <div class="post-tags">
+    {{tags}}
+  </div>
+</article> 

@@ -1,0 +1,50 @@
+{
+  "site": {
+    "title": "Blog name",
+    "description": "Blog description",
+    "language": "ru",
+    "copyright": "© 2025 Blog name"
+  },
+  "navigation": {
+    "items": [
+      {"label": "Блог", "url": "/", "active": true},
+      {"label": "Теги", "url": "/tags"},
+      {"label": "О блоге", "url": "/about"}
+    ]
+  },
+  "social": {
+    "links": [
+      {"platform": "GitHub", "url": "https://github.com/your_github_username"},
+      {"platform": "Twitter", "url": "https://twitter.com/your_twitter_username"},
+      {"platform": "LinkedIn", "url": "https://linkedin.com/in/your_linkedin_username"}
+    ]
+  },
+  "appearance": {
+    "colors": {
+      "primary": "#18181b",
+      "secondary": "#64748b",
+      "accent": "#3b82f6",
+      "background": "#fafafa",
+      "surface": "#fafafa",
+      "text": "#1e293b",
+      "border": "#e2e8f0"
+    },
+    "darkMode": {
+      "background": "#121212",
+      "surface": "#1e1e1e",
+      "text": "#e2e8f0",
+      "secondary": "#94a3b8",
+      "border": "#2d3748"
+    },
+    "fonts": {
+      "main": "Inter",
+      "code": "JetBrains Mono"
+    }
+  },
+  "content": {
+    "postsPerPage": 7,
+    "showReadingTime": true,
+    "defaultAuthor": "Blog author name",
+    "wordsPerMinute": 200
+  }
+} 
