@@ -337,7 +337,7 @@ async function generateStaticAssets(options = {}) {
       }
     }));
 
-    // Handle favicon.ico copying
+    // Handle favicon.ico copying with proper binary file handling
     const destFavicon = path.join(config.paths.outputDir, 'favicon.ico');
     const blogFavicon = path.join(process.cwd(), 'blog/favicon.ico');
     const engineFavicon = path.join(__dirname, '../favicon.ico');

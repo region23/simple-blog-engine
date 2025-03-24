@@ -98,6 +98,7 @@ program
   .command('init')
   .description('Initialize a new blog project')
   .option('-d, --directory <path>', 'Project directory', '.')
+  .option('-f, --force', 'Force overwrite existing files except blog/content and blog/images', false)
   .action(async (options) => {
     const targetDir = path.resolve(options.directory);
     
@@ -127,14 +128,31 @@ program
     // Copy default files from engine/defaults
     console.log('Copying default files to blog directory...');
     
-    // Copy config.json
+    // Handle config.json with intelligent merging
     const configPath = path.join(targetDir, 'blog/config.json');
+    const defaultConfigPath = path.join(__dirname, '../defaults/config.json');
+    
     if (!fs.existsSync(configPath)) {
-      fs.copyFileSync(
-        path.join(__dirname, '../defaults/config.json'),
-        configPath
-      );
-      console.log('Copied default config.json');
+      // For new installations, just copy the default config
+      fs.copyFileSync(defaultConfigPath, configPath);
+      console.log('Created new config.json');
+    } else if (options.force) {
+      // For force updates, merge existing config with defaults
+      try {
+        const existingConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        const defaultConfig = JSON.parse(fs.readFileSync(defaultConfigPath, 'utf8'));
+        const { mergeConfigs } = require('../lib/configManager');
+        
+        // Merge configs preserving user settings
+        const newConfig = mergeConfigs(existingConfig, defaultConfig);
+        
+        // Write merged config
+        fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
+        console.log('Updated config.json (preserved user settings)');
+      } catch (error) {
+        console.error('Error updating config.json:', error);
+        console.log('Keeping existing config.json');
+      }
     }
     
     // Copy default templates
@@ -142,14 +160,14 @@ program
     const defaultTemplatesDir = path.join(__dirname, '../defaults/templates');
     fs.readdirSync(defaultTemplatesDir).forEach(file => {
       const targetPath = path.join(templatesDir, file);
-      if (!fs.existsSync(targetPath)) {
+      if (!fs.existsSync(targetPath) || options.force) {
         fs.copyFileSync(
           path.join(defaultTemplatesDir, file),
           targetPath
         );
+        console.log(options.force ? `Overwritten template: ${file}` : `Copied template: ${file}`);
       }
     });
-    console.log('Copied default templates');
     
     // Copy default CSS files
     const cssDir = path.join(targetDir, 'blog/css');
@@ -165,17 +183,17 @@ program
       // Only copy .css files
       if (file.endsWith('.css')) {
         const targetPath = path.join(cssDir, file);
-        if (!fs.existsSync(targetPath)) {
+        if (!fs.existsSync(targetPath) || options.force) {
           fs.copyFileSync(
             path.join(defaultCssDir, file),
             targetPath
           );
+          console.log(options.force ? `Overwritten CSS: ${file}` : `Copied CSS: ${file}`);
         }
       }
     });
-    console.log('Copied default CSS files');
     
-    // Copy default images
+    // Copy default images - skip if exists, even with --force
     const imagesDir = path.join(targetDir, 'blog/images');
     const defaultImagesDir = path.join(__dirname, '../defaults/images');
     fs.readdirSync(defaultImagesDir).forEach(file => {
@@ -185,9 +203,9 @@ program
           path.join(defaultImagesDir, file),
           targetPath
         );
+        console.log(`Copied image: ${file}`);
       }
     });
-    console.log('Copied default images');
     
     // Create GitHub Actions workflow for GitHub Pages
     const githubWorkflowsDir = path.join(targetDir, '.github/workflows');
@@ -197,28 +215,28 @@ program
     }
     
     const githubPagesWorkflowPath = path.join(githubWorkflowsDir, 'github-pages.yml');
-    if (!fs.existsSync(githubPagesWorkflowPath)) {
+    if (!fs.existsSync(githubPagesWorkflowPath) || options.force) {
       fs.copyFileSync(
         path.join(__dirname, '../defaults/github/workflows/github-pages.yml'),
         githubPagesWorkflowPath
       );
-      console.log('Created GitHub Pages workflow file');
+      console.log(options.force ? 'Overwritten GitHub Pages workflow file' : 'Created GitHub Pages workflow file');
     }
     
     // Copy .gitignore to project root
     const gitignorePath = path.join(__dirname, '../defaults/gitignore.template');
     const targetGitignorePath = path.join(targetDir, '.gitignore');
-    if (!fs.existsSync(targetGitignorePath)) {
+    if (!fs.existsSync(targetGitignorePath) || options.force) {
       fs.copyFileSync(gitignorePath, targetGitignorePath);
-      console.log('Created .gitignore file');
+      console.log(options.force ? 'Overwritten .gitignore file' : 'Created .gitignore file');
     }
-    
+
     // Copy favicon.ico to blog directory
     const engineFavicon = path.join(__dirname, '../favicon.ico');
     const blogFavicon = path.join(targetDir, 'blog/favicon.ico');
-    if (fs.existsSync(engineFavicon) && !fs.existsSync(blogFavicon)) {
+    if (fs.existsSync(engineFavicon) && (!fs.existsSync(blogFavicon) || options.force)) {
       fs.copyFileSync(engineFavicon, blogFavicon);
-      console.log('Copied favicon.ico to blog directory');
+      console.log(options.force ? 'Overwritten favicon.ico in blog directory' : 'Copied favicon.ico to blog directory');
     }
     
     // Create Telegram IV template
@@ -362,7 +380,7 @@ Write something about yourself here.
     console.log('Updated package.json');
     
     // Copy root files 
-    const rootFiles = ['.htaccess', '_redirects', 'favicon.ico', '.nojekyll'];
+    const rootFiles = ['.htaccess', '_redirects', '.nojekyll'];
     
     await Promise.all(rootFiles.map(async (file) => {
       const sourcePath = path.join(__dirname, '../', file);

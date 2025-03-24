@@ -51,6 +51,84 @@ const DEFAULT_CONFIG = {
 let configCache = null;
 
 /**
+ * Merge existing config with default config preserving user settings
+ * @param {Object} existingConfig - User's existing configuration
+ * @param {Object} defaultConfig - Default configuration to merge with
+ * @returns {Object} Merged configuration
+ */
+function mergeConfigs(existingConfig, defaultConfig = DEFAULT_CONFIG) {
+  // Helper function to check if an object is a plain object (not array, null, etc)
+  const isPlainObject = (obj) => obj && typeof obj === 'object' && !Array.isArray(obj);
+
+  // Deep merge objects preserving user settings
+  const deepMerge = (target, source) => {
+    const output = { ...target };
+    
+    if (isPlainObject(target) && isPlainObject(source)) {
+      for (const key in source) {
+        if (isPlainObject(source[key])) {
+          if (key in target) {
+            output[key] = deepMerge(target[key], source[key]);
+          } else {
+            output[key] = { ...source[key] };
+          }
+        } else {
+          // For non-object values, prefer target (user) values over source (default) values
+          output[key] = key in target ? target[key] : source[key];
+        }
+      }
+    }
+    return output;
+  };
+
+  // Preserve user settings that we always want to keep
+  const userSettings = {
+    site: {
+      title: existingConfig.site?.title,
+      description: existingConfig.site?.description,
+      language: existingConfig.site?.language,
+      url: existingConfig.site?.url,
+      author: existingConfig.site?.author
+    },
+    appearance: existingConfig.appearance,
+    // Preserve custom paths if they exist
+    paths: {
+      ...existingConfig.paths
+    }
+  };
+
+  // Start with default config and merge with existing, then ensure user settings
+  const merged = deepMerge(defaultConfig, existingConfig);
+  
+  // Ensure user settings are preserved
+  if (userSettings.site) {
+    merged.site = {
+      ...merged.site,
+      ...userSettings.site
+    };
+  }
+  
+  if (userSettings.appearance) {
+    merged.appearance = {
+      ...merged.appearance,
+      ...userSettings.appearance
+    };
+  }
+
+  if (userSettings.paths) {
+    merged.paths = {
+      ...merged.paths,
+      ...userSettings.paths
+    };
+  }
+
+  // Always update version to latest
+  merged._version = CONFIG_VERSION;
+
+  return merged;
+}
+
+/**
  * Deep merge two objects
  * @param {Object} target - Target object
  * @param {Object} source - Source object to merge
@@ -314,7 +392,7 @@ async function loadConfig(options = {}) {
       const migratedConfig = migrateConfig(userConfig, userVersion, CONFIG_VERSION);
       
       // Merge with defaults
-      config = deepMerge(config, migratedConfig);
+      config = mergeConfigs(migratedConfig);
     } catch (error) {
       console.warn(`Could not load config from ${configPath}:`, error.message);
       console.warn('Using default configuration');
@@ -376,5 +454,6 @@ module.exports = {
   getConfig,
   clearConfigCache,
   validateConfig,
-  CONFIG_VERSION
+  CONFIG_VERSION,
+  mergeConfigs
 }; 
