@@ -44,7 +44,7 @@
   "content": {
     "postsPerPage": 7,
     "showReadingTime": true,
-    "defaultAuthor": "Blog author name",
+    "defaultAuthor": "",
     "wordsPerMinute": 200
   }
 } 

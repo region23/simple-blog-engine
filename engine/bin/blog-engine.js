@@ -13,12 +13,12 @@ const readline = require('readline');
 const { createPost } = require('../lib/postGenerator');
 
 // Get package version
-const packageJson = require('../package.json');
+const enginePackageJson = require('../package.json');
 
 program
   .name('simple-blog-engine')
   .description('Markdown blog engine CLI')
-  .version(packageJson.version);
+  .version(enginePackageJson.version);
 
 program
   .command('build')
@@ -331,8 +331,11 @@ Write something about yourself here.
       delete packageJson.dependencies['markdown-blog-engine'];
     }
     
-    // Add simple-blog-engine dependency
-    packageJson.dependencies['simple-blog-engine'] = '^2.0.0';
+    // Add simple-blog-engine dependency with current major version
+    // Extract major version number from the package version
+    const currentVersion = enginePackageJson.version;
+    const majorVersion = currentVersion.split('.')[0];
+    packageJson.dependencies['simple-blog-engine'] = `^${majorVersion}.0.0`;
     
     fs.writeFileSync(
       packageJsonPath,

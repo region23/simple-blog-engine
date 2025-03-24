@@ -314,11 +314,13 @@ npm install simple-blog-engine@x.y.z
   "content": {
     "postsPerPage": 7,
     "showReadingTime": true,
-    "defaultAuthor": "Автор блога",
+    "defaultAuthor": "",
     "wordsPerMinute": 200
   }
 }
 ```
+
+Поле `defaultAuthor` можно оставить пустым для авторского блога или указать имя автора, если в постах не указывается это поле явно.
 
 ## Лицензия
 
