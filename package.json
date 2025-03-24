@@ -22,12 +22,22 @@
     "fslightbox": "^3.5.1",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.1",
-    "marked": "^15.0.7",
-    "marked-gfm-heading-id": "^4.1.1",
-    "marked-smartypants": "^1.1.9",
     "simple-blog-engine": "^3.0.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
+    "marked": "^15.0.7",
+    "marked-gfm-heading-id": "^4.1.1",
+    "marked-smartypants": "^1.1.9",
     "serve": "^14.2.1"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/region23/simple-blog-engine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/region23/simple-blog-engine/issues"
+  },
+  "homepage": "https://github.com/region23/simple-blog-engine#readme"
 }

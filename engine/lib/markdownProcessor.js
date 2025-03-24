@@ -6,7 +6,7 @@
 const { marked } = require('marked');
 const frontmatter = require('gray-matter');
 const { markedSmartypants } = require('marked-smartypants');
-const gfmHeadingId = require('marked-gfm-heading-id');
+const { gfmHeadingId } = require('marked-gfm-heading-id');
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -92,46 +92,71 @@ function addToCache(key, value) {
  * @returns {Object} - Marked renderer object
  */
 function createRenderer() {
-  return {
-    // Code blocks with syntax highlighting
-    code(code, language) {
-      return `<pre><code class="language-${language || 'text'}">${code}</code></pre>`;
-    },
-    
-    // Links with proper handling
-    link(href, title, text) {
-      if (!href) href = '';
-      const titleAttr = title ? ` title="${title}"` : '';
-      // External links get target="_blank"
-      const targetAttr = href.startsWith && href.startsWith('http') ? 
-        ' target="_blank" rel="noopener noreferrer"' : '';
-      return `<a href="${href}"${titleAttr}${targetAttr}>${text}</a>`;
-    },
-    
-    // Image handling
-    image(href, title, text) {
-      if (!href) href = '';
-      const titleAttr = title ? ` title="${title}"` : '';
-      return `<figure><img src="${href}" alt="${text || ''}"${titleAttr}><figcaption>${text || ''}</figcaption></figure>`;
-    },
-    
-    // Apply any custom renderers from config
-    ...config.renderer
+  console.log('Creating custom renderer');
+  // Создаем экземпляр стандартного рендерера
+  const renderer = new marked.Renderer();
+
+  // Переопределяем методы
+  renderer.code = function(code, language) {
+    console.log('Code renderer called:', { 
+      code: code,
+      codeType: typeof code,
+      language,
+      languageType: typeof language
+    });
+    const codeText = typeof code === 'object' ? code.text : String(code || '');
+    const lang = typeof code === 'object' ? code.lang : String(language || 'text');
+    return `<pre><code class="language-${lang}">${codeText}</code></pre>`;
   };
+
+  renderer.link = function(href, title, text) {
+    console.log('Link renderer called:', { href, title, text });
+    const url = typeof href === 'object' ? href.href : String(href || '');
+    const linkText = typeof href === 'object' ? href.text : text;
+    const linkTitle = typeof href === 'object' ? href.title : title;
+    const titleAttr = linkTitle ? ` title="${linkTitle}"` : '';
+    const targetAttr = url.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
+    return `<a href="${url}"${titleAttr}${targetAttr}>${linkText}</a>`;
+  };
+
+  renderer.image = function(href, title, text) {
+    console.log('Image renderer called:', { href, title, text });
+    const url = typeof href === 'object' ? href.href : String(href || '');
+    const alt = typeof href === 'object' ? href.text : text;
+    const imgTitle = typeof href === 'object' ? href.title : title;
+    const titleAttr = imgTitle ? ` title="${imgTitle}"` : '';
+    return `
+      <figure>
+        <img src="${url}" alt="${alt || ''}"${titleAttr}>
+        ${alt ? `<figcaption>${alt}</figcaption>` : ''}
+      </figure>
+    `;
+  };
+
+  // Применяем кастомные рендереры из конфига (если есть)
+  console.log('Applying custom renderers from config:', Object.keys(config.renderer));
+  Object.assign(renderer, config.renderer);
+
+  return renderer;
 }
 
 /**
  * Configure Marked renderer with standard options
  */
 function configureMarked() {
-  // Set marked options
-  marked.use({
-    renderer: createRenderer(),
+  console.log('Configuring marked with options:', config.markedOptions);
+  // Создаем рендерер
+  const renderer = createRenderer();
+
+  // Настройки marked
+  marked.setOptions({
+    renderer,
     ...config.markedOptions
   });
 
-  // Add extensions
+  // Добавляем расширения
   try {
+    console.log('Adding marked extensions: smartypants, gfm-heading-id');
     marked.use(markedSmartypants());
     marked.use(gfmHeadingId());
   } catch (error) {
@@ -147,13 +172,23 @@ function configureMarked() {
 function renderMarkdown(markdown) {
   if (!markdown) return '';
   
+  console.log('Rendering markdown:', {
+    preview: markdown.substring(0, 100),
+    length: markdown.length
+  });
+  
   // Check cache first
   if (config.cacheRendering && renderCache.has(markdown)) {
+    console.log('Using cached rendering result');
     return renderCache.get(markdown);
   }
   
   try {
     const html = marked.parse(markdown);
+    console.log('Rendered HTML:', {
+      preview: html.substring(0, 100),
+      length: html.length
+    });
     
     // Cache the result
     if (config.cacheRendering) {
