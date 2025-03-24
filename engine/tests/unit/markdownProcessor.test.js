@@ -1,6 +1,11 @@
-const { renderMarkdown, extractHeadings } = require('../../lib/markdownProcessor');
+const { renderMarkdown, extractHeadings, setDebugMode } = require('../../lib/markdownProcessor');
 
 describe('Markdown Processor', () => {
+  beforeAll(() => {
+    // Отключаем режим отладки для тестов
+    setDebugMode(false);
+  });
+
   describe('renderMarkdown with gfmHeadingId', () => {
     it('should add ids to headings', () => {
       const markdown = `# Test Heading

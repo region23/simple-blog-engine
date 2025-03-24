@@ -8,6 +8,19 @@ const frontmatter = require('gray-matter');
 const { markedSmartypants } = require('marked-smartypants');
 const { gfmHeadingId } = require('marked-gfm-heading-id');
 
+// Debug mode control
+let isDebugMode = false;
+
+function debugLog(message) {
+  if (isDebugMode) {
+    console.log(message);
+  }
+}
+
+function setDebugMode(enabled) {
+  isDebugMode = enabled;
+}
+
 // Default configuration
 const DEFAULT_CONFIG = {
   readingTime: {
@@ -92,13 +105,13 @@ function addToCache(key, value) {
  * @returns {Object} - Marked renderer object
  */
 function createRenderer() {
-  console.log('Creating custom renderer');
+  debugLog('Creating custom renderer');
   // Создаем экземпляр стандартного рендерера
   const renderer = new marked.Renderer();
 
   // Переопределяем методы
   renderer.code = function(code, language) {
-    console.log('Code renderer called:', { 
+    debugLog('Code renderer called:', { 
       code: code,
       codeType: typeof code,
       language,
@@ -110,7 +123,7 @@ function createRenderer() {
   };
 
   renderer.link = function(href, title, text) {
-    console.log('Link renderer called:', { href, title, text });
+    debugLog('Link renderer called:', { href, title, text });
     const url = typeof href === 'object' ? href.href : String(href || '');
     const linkText = typeof href === 'object' ? href.text : text;
     const linkTitle = typeof href === 'object' ? href.title : title;
@@ -120,7 +133,7 @@ function createRenderer() {
   };
 
   renderer.image = function(href, title, text) {
-    console.log('Image renderer called:', { href, title, text });
+    debugLog('Image renderer called:', { href, title, text });
     const url = typeof href === 'object' ? href.href : String(href || '');
     const alt = typeof href === 'object' ? href.text : text;
     const imgTitle = typeof href === 'object' ? href.title : title;
@@ -134,7 +147,7 @@ function createRenderer() {
   };
 
   // Применяем кастомные рендереры из конфига (если есть)
-  console.log('Applying custom renderers from config:', Object.keys(config.renderer));
+  debugLog('Applying custom renderers from config:', Object.keys(config.renderer));
   Object.assign(renderer, config.renderer);
 
   return renderer;
@@ -144,7 +157,7 @@ function createRenderer() {
  * Configure Marked renderer with standard options
  */
 function configureMarked() {
-  console.log('Configuring marked with options:', config.markedOptions);
+  debugLog('Configuring marked with options:', config.markedOptions);
   // Создаем рендерер
   const renderer = createRenderer();
 
@@ -156,7 +169,7 @@ function configureMarked() {
 
   // Добавляем расширения
   try {
-    console.log('Adding marked extensions: smartypants, gfm-heading-id');
+    debugLog('Adding marked extensions: smartypants, gfm-heading-id');
     marked.use(markedSmartypants());
     marked.use(gfmHeadingId());
   } catch (error) {
@@ -172,20 +185,20 @@ function configureMarked() {
 function renderMarkdown(markdown) {
   if (!markdown) return '';
   
-  console.log('Rendering markdown:', {
+  debugLog('Rendering markdown:', {
     preview: markdown.substring(0, 100),
     length: markdown.length
   });
   
   // Check cache first
   if (config.cacheRendering && renderCache.has(markdown)) {
-    console.log('Using cached rendering result');
+    debugLog('Using cached rendering result');
     return renderCache.get(markdown);
   }
   
   try {
     const html = marked.parse(markdown);
-    console.log('Rendered HTML:', {
+    debugLog('Rendered HTML:', {
       preview: html.substring(0, 100),
       length: html.length
     });
@@ -341,5 +354,6 @@ module.exports = {
   updateConfig,
   clearCache,
   extractHeadings,
-  generateTableOfContents
+  generateTableOfContents,
+  setDebugMode
 }; 
