@@ -11,6 +11,7 @@ const fs = require('fs');
 const { buildSite } = require('../lib/index');
 const readline = require('readline');
 const { createPost } = require('../lib/postGenerator');
+const { log, readFile, writeFile } = require('../lib/utils');
 
 // Get package version
 const enginePackageJson = require('../package.json');
@@ -96,7 +97,7 @@ program
   .command('init')
   .description('Initialize a new blog project')
   .option('-d, --directory <path>', 'Project directory', '.')
-  .action((options) => {
+  .action(async (options) => {
     const targetDir = path.resolve(options.directory);
     
     // Check if directory exists
@@ -201,6 +202,14 @@ program
         githubPagesWorkflowPath
       );
       console.log('Created GitHub Pages workflow file');
+    }
+    
+    // Copy .gitignore to project root
+    const gitignorePath = path.join(__dirname, '../defaults/.gitignore');
+    const targetGitignorePath = path.join(targetDir, '.gitignore');
+    if (!fs.existsSync(targetGitignorePath)) {
+      fs.copyFileSync(gitignorePath, targetGitignorePath);
+      console.log('Created .gitignore file');
     }
     
     // Create Telegram IV template
@@ -343,6 +352,20 @@ Write something about yourself here.
     );
     console.log('Updated package.json');
     
+    // Copy root files 
+    const rootFiles = ['.htaccess', '_redirects', 'favicon.ico', '.nojekyll'];
+    
+    await Promise.all(rootFiles.map(async (file) => {
+      const sourcePath = path.join(__dirname, '../', file);
+      const destPath = path.join(targetDir, file);
+      
+      if (fs.existsSync(sourcePath)) {
+        log(`Copying ${file}...`, options);
+        const content = await readFile(sourcePath);
+        await writeFile(destPath, content);
+      }
+    }));
+
     console.log('\nBlog initialized successfully!');
     console.log('\nTo build your blog, run:');
     console.log('  npm run build');

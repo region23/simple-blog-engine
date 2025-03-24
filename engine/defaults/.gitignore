@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Editor and OS files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Coverage directory
+coverage/ 
+
+# Test directories
+tests/temp*/
+tests/npm-test-*/
+.nyc_output/ 
+
+dist/
