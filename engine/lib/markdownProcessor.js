@@ -6,7 +6,7 @@
 const { marked } = require('marked');
 const frontmatter = require('gray-matter');
 const { markedSmartypants } = require('marked-smartypants');
-const { gfmHeadingId } = require('marked-gfm-heading-id');
+const gfmHeadingId = require('marked-gfm-heading-id');
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -103,7 +103,8 @@ function createRenderer() {
       if (!href) href = '';
       const titleAttr = title ? ` title="${title}"` : '';
       // External links get target="_blank"
-      const targetAttr = href.startsWith && href.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
+      const targetAttr = href.startsWith && href.startsWith('http') ? 
+        ' target="_blank" rel="noopener noreferrer"' : '';
       return `<a href="${href}"${titleAttr}${targetAttr}>${text}</a>`;
     },
     
@@ -130,8 +131,12 @@ function configureMarked() {
   });
 
   // Add extensions
-  marked.use(markedSmartypants());
-  marked.use(gfmHeadingId());
+  try {
+    marked.use(markedSmartypants());
+    marked.use(gfmHeadingId());
+  } catch (error) {
+    console.error('Error loading Marked extensions:', error);
+  }
 }
 
 /**

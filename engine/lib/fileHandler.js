@@ -273,6 +273,23 @@ function clearCache() {
   fileCache.clear();
 }
 
+/**
+ * Lists directories within a directory
+ * @param {string} directory - Directory to list
+ * @returns {Promise<Array>} - Array of directories
+ */
+async function listDirectories(directory) {
+  try {
+    const items = await readDirAsync(directory, { withFileTypes: true });
+    return items
+      .filter(item => item.isDirectory())
+      .map(item => path.join(directory, item.name));
+  } catch (error) {
+    console.error(`Error listing directories in ${directory}:`, error);
+    return [];
+  }
+}
+
 module.exports = {
   readFile,
   writeFile,
@@ -281,5 +298,6 @@ module.exports = {
   copyFile,
   copyDirectory,
   updateConfig,
-  clearCache
+  clearCache,
+  listDirectories
 }; 

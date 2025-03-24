@@ -5,10 +5,10 @@
   "private": true,
   "scripts": {
     "start": "npx serve dist",
-    "dev": "simple-blog-engine serve",
-    "build": "simple-blog-engine build",
-    "init": "simple-blog-engine init",
-    "post": "simple-blog-engine post",
+    "dev": "node engine/bin/blog-engine.js serve",
+    "build": "node engine/bin/blog-engine.js build",
+    "init": "node engine/bin/blog-engine.js init",
+    "post": "node engine/bin/blog-engine.js post",
     "deploy": "npm run build && echo \"Deploy command goes here\""
   },
   "keywords": [
@@ -19,6 +19,12 @@
   "author": "Pavlenko",
   "license": "MIT",
   "dependencies": {
+    "fslightbox": "^3.5.1",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "marked": "^15.0.7",
+    "marked-gfm-heading-id": "^4.1.1",
+    "marked-smartypants": "^1.1.9",
     "simple-blog-engine": "^3.0.0"
   },
   "devDependencies": {

@@ -6,9 +6,10 @@
 const path = require('path');
 const fs = require('fs');
 const cheerio = require('cheerio');
+const util = require('util');
 
 const { loadConfig, getConfig } = require('./configManager');
-const { readFile, writeFile, ensureDirectoryExists, listFiles, copyDirectory, copyFile } = require('./fileHandler');
+const { readFile, writeFile, ensureDirectoryExists, listFiles, copyDirectory, copyFile, listDirectories } = require('./fileHandler');
 const { renderMarkdown, extractFrontmatter, calculateReadingTime, formatDate, updateConfig: updateMarkdownConfig } = require('./markdownProcessor');
 const { writeCssVariables } = require('./cssGenerator');
 const { 
@@ -211,8 +212,8 @@ async function generateStaticAssets(options = {}) {
   const config = getConfig();
   
   try {
-    // Copy engine static directories: js and images, but NOT css (will be handled separately)
-    const staticDirs = ['js', 'images'];
+    // Copy engine static directories: images, but NOT css or js (will be handled separately)
+    const staticDirs = ['images'];
     
     await Promise.all(staticDirs.map(async (dir) => {
       const sourcePath = path.join(__dirname, '../', dir);
@@ -223,6 +224,70 @@ async function generateStaticAssets(options = {}) {
         await copyDirectory(sourcePath, destPath);
       }
     }));
+    
+    // Create JS directory in output
+    const destJsDir = path.join(config.paths.outputDir, 'js');
+    await ensureDirectoryExists(destJsDir);
+    
+    // First, copy JS files from the blog (if they exist)
+    const blogJsDir = path.join(process.cwd(), 'blog/js');
+    
+    if (fs.existsSync(blogJsDir)) {
+      log(`Copying blog JS files...`, options);
+      const jsFiles = await listFiles(blogJsDir, { fullPath: true, filter: /\.js$/ });
+      
+      for (const file of jsFiles) {
+        const fileName = path.basename(file);
+        await copyFile(file, path.join(destJsDir, fileName));
+        log(`Copied ${fileName} to ${destJsDir}`, options);
+      }
+    }
+    
+    // Then, copy engine JS files from defaults
+    const engineJsDir = path.join(__dirname, '../defaults/js');
+    
+    if (fs.existsSync(engineJsDir)) {
+      log(`Copying engine JS files...`, options);
+      
+      // First, copy JS files from the root of defaults/js
+      const engineJsFiles = await listFiles(engineJsDir, { fullPath: true, filter: /\.js$/, recursive: false });
+      
+      for (const file of engineJsFiles) {
+        const fileName = path.basename(file);
+        const destFile = path.join(destJsDir, fileName);
+        
+        // Only copy if the file doesn't already exist in the output directory
+        if (!fs.existsSync(destFile)) {
+          await copyFile(file, destFile);
+          log(`Copied engine ${fileName} to ${destJsDir}`, options);
+        }
+      }
+      
+      // Then, copy JS files from subdirectories of defaults/js
+      const subdirectories = await listDirectories(engineJsDir);
+      
+      for (const subdir of subdirectories) {
+        const subdirName = path.basename(subdir);
+        const destSubdir = path.join(destJsDir, subdirName);
+        
+        // Create subdirectory in destination if it doesn't exist
+        await ensureDirectoryExists(destSubdir);
+        
+        // Get JS files from the subdirectory
+        const subdirJsFiles = await listFiles(subdir, { fullPath: true, filter: /\.js$/ });
+        
+        for (const file of subdirJsFiles) {
+          const fileName = path.basename(file);
+          const destFile = path.join(destSubdir, fileName);
+          
+          // Only copy if the file doesn't already exist in the output directory
+          if (!fs.existsSync(destFile)) {
+            await copyFile(file, destFile);
+            log(`Copied engine ${subdirName}/${fileName} to ${destSubdir}`, options);
+          }
+        }
+      }
+    }
     
     // Create CSS directory in output
     const destCssDir = path.join(config.paths.outputDir, 'css');
