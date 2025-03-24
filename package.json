@@ -9,7 +9,8 @@
     "build": "node engine/bin/blog-engine.js build",
     "init": "node engine/bin/blog-engine.js init",
     "post": "node engine/bin/blog-engine.js post",
-    "deploy": "npm run build && echo \"Deploy command goes here\""
+    "deploy": "npm run build && echo \"Deploy command goes here\"",
+    "test": "jest"
   },
   "keywords": [
     "blog",

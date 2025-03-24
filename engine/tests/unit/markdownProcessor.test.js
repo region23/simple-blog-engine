@@ -1,4 +1,4 @@
-const { renderMarkdown, extractHeadings } = require('../lib/markdownProcessor');
+const { renderMarkdown, extractHeadings } = require('../../lib/markdownProcessor');
 
 describe('Markdown Processor', () => {
   describe('renderMarkdown with gfmHeadingId', () => {
