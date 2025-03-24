@@ -786,5 +786,6 @@ module.exports = {
   buildTagsIndexPage,
   buildAboutPage,
   buildErrorPage,
-  buildSitemap
+  buildSitemap,
+  log
 }; 

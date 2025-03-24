@@ -11,7 +11,8 @@ const fs = require('fs');
 const { buildSite } = require('../lib/index');
 const readline = require('readline');
 const { createPost } = require('../lib/postGenerator');
-const { log, readFile, writeFile } = require('../lib/utils');
+const { log } = require('../lib/siteBuilder');
+const { readFile, writeFile } = require('../lib/fileHandler');
 
 // Get package version
 const enginePackageJson = require('../package.json');

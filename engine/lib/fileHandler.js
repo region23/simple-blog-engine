@@ -291,13 +291,13 @@ async function listDirectories(directory) {
 }
 
 module.exports = {
+  updateConfig,
   readFile,
   writeFile,
   ensureDirectoryExists,
   listFiles,
   copyFile,
   copyDirectory,
-  updateConfig,
   clearCache,
   listDirectories
 }; 
