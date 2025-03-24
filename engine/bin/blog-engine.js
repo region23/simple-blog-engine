@@ -206,7 +206,7 @@ program
     }
     
     // Copy .gitignore to project root
-    const gitignorePath = path.join(__dirname, '../defaults/.gitignore');
+    const gitignorePath = path.join(__dirname, '../defaults/gitignore.template');
     const targetGitignorePath = path.join(targetDir, '.gitignore');
     if (!fs.existsSync(targetGitignorePath)) {
       fs.copyFileSync(gitignorePath, targetGitignorePath);
