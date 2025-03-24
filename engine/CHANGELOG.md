@@ -5,6 +5,9 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.1 (2023-03-23)
+- Мелкие правки для настройки процесса CI/CD
+
 ## [3.0.0] - 2025-03-23
 
 ### Изменено
