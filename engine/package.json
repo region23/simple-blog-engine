@@ -1,6 +1,6 @@
 {
   "name": "simple-blog-engine",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Современный легковесный генератор статического блога с поддержкой Markdown",
   "main": "lib/index.js",
   "bin": {

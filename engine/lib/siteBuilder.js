@@ -324,7 +324,7 @@ async function generateStaticAssets(options = {}) {
     }
     
     // Copy root files 
-    const rootFiles = ['.htaccess', '_redirects', 'favicon.ico', '.nojekyll'];
+    const rootFiles = ['.htaccess', '_redirects', '.nojekyll'];
     
     await Promise.all(rootFiles.map(async (file) => {
       const sourcePath = path.join(__dirname, '../', file);
@@ -336,6 +336,19 @@ async function generateStaticAssets(options = {}) {
         await writeFile(destPath, content);
       }
     }));
+
+    // Handle favicon.ico copying
+    const destFavicon = path.join(config.paths.outputDir, 'favicon.ico');
+    const blogFavicon = path.join(process.cwd(), 'blog/favicon.ico');
+    const engineFavicon = path.join(__dirname, '../favicon.ico');
+
+    if (fs.existsSync(blogFavicon)) {
+      log(`Copying blog favicon.ico...`, options);
+      await copyFile(blogFavicon, destFavicon);
+    } else if (fs.existsSync(engineFavicon)) {
+      log(`Copying engine favicon.ico...`, options);
+      await copyFile(engineFavicon, destFavicon);
+    }
   } catch (error) {
     console.error('Error generating static assets:', error);
     throw error;

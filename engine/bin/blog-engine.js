@@ -213,6 +213,14 @@ program
       console.log('Created .gitignore file');
     }
     
+    // Copy favicon.ico to blog directory
+    const engineFavicon = path.join(__dirname, '../favicon.ico');
+    const blogFavicon = path.join(targetDir, 'blog/favicon.ico');
+    if (fs.existsSync(engineFavicon) && !fs.existsSync(blogFavicon)) {
+      fs.copyFileSync(engineFavicon, blogFavicon);
+      console.log('Copied favicon.ico to blog directory');
+    }
+    
     // Create Telegram IV template
     const telegramTemplatePath = path.join(targetDir, 'blog/telegram-iv-template.txt');
     if (!fs.existsSync(telegramTemplatePath)) {
